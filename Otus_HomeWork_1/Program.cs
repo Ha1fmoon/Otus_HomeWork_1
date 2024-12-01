@@ -100,13 +100,18 @@ internal class Program
                     Console.Clear();
                     return user;
                 default:
-                    Console.Clear();
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid input. Please press 'y' for yes or 'n' for no.");
-                    Console.ResetColor();
+                    HandleInvalidRestartInput();
                     break;
             }
         }
+    }
+    
+    private static void HandleInvalidRestartInput()
+    {
+        Console.Clear();
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Invalid input. Please press 'y' for yes or 'n' for no.");
+        Console.ResetColor();
     }
     
     private static void AvailableOptions(string? user)
@@ -141,12 +146,13 @@ internal class Program
 
     private static void BotInfo()
     {
-        var version = "1.1";
+        var version = "1.2";
         var releaseDate = "16.11.2024";
         var patchNotes = new List<string>
         {
             "Version 1.0 [16.11.2024] - Initial release.",
-            "Version 1.1 [01.12.2024] - Refactoring and code cleanup."
+            "Version 1.1 [01.12.2024] - Refactoring and code cleanup.",
+            "Version 1.2 [01.12.2024] - Minor cleanup in Restart logic."
         };
 
         Console.Clear();
