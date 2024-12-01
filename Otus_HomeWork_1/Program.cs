@@ -145,17 +145,18 @@ internal class Program
 
     private static void BotInfo()
     {
-        var version = "2.2";
         var releaseDate = "16.11.2024";
-        var patchNotes = new List<string>
+        var releaseNotes = new Dictionary<string, string>
         {
-            "Version 1.0 [16.11.2024] - Initial release.",
-            "Version 1.1 [01.12.2024] - Refactoring and code cleanup.",
-            "Version 1.2 [01.12.2024] - Minor cleanup in Restart logic.",
-            "Version 2.0 [01.12.2024] - Implement task creation, display, and removal.",
-            "Version 2.1 [01.12.2024] - Remove commented-out code.",
-            "Version 2.2 [01.12.2024] - Add human-readable task indices and cancellation option."
+            { "1.0", "[16.11.2024] - Initial release." },
+            { "1.1", "[01.12.2024] - Refactoring and code cleanup." },
+            { "1.2", "[01.12.2024] - Minor cleanup in Restart logic." },
+            { "2.0", "[01.12.2024] - Implement task creation, display, and removal." },
+            { "2.1", "[01.12.2024] - Remove commented-out code." },
+            { "2.2", "[01.12.2024] - Add human-readable task indices and cancellation option." },
+            { "2.3", "[01.12.2024] - Display task name on removal and update patch notes." }
         };
+        var version = releaseNotes.Last().Key;
 
         Console.Clear();
 
@@ -165,8 +166,10 @@ internal class Program
         sb.AppendLine();
         sb.AppendLine("Patch Notes:");
 
-        patchNotes.Reverse();
-        foreach (var note in patchNotes) sb.AppendLine($"* {note}");
+        foreach (var note in releaseNotes.Reverse())
+        {
+            sb.AppendLine($"* Version {note.Key} {note.Value}");
+        }
 
         Console.WriteLine(sb.ToString());
     }
@@ -240,6 +243,8 @@ internal class Program
         sb.AppendLine().AppendLine("Enter task ID to remove or 0 to cancel:");
 
         var taskId = TaskIdInputAndValidate(taskList.Count, sb.ToString());
+        
+        var taskName = taskList[taskId - 1];
 
         if (taskId == 0)
         {
@@ -250,7 +255,7 @@ internal class Program
 
         taskList.RemoveAt(taskId - 1);
 
-        Console.WriteLine($"Task [{taskId}] has been removed.");
+        Console.WriteLine($"Task \"{taskName}\" has been removed.");
         Console.WriteLine();
     }
 
