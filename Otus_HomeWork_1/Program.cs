@@ -145,14 +145,15 @@ internal class Program
 
     private static void BotInfo()
     {
-        var version = "2.0";
+        var version = "2.1";
         var releaseDate = "16.11.2024";
         var patchNotes = new List<string>
         {
             "Version 1.0 [16.11.2024] - Initial release.",
             "Version 1.1 [01.12.2024] - Refactoring and code cleanup.",
             "Version 1.2 [01.12.2024] - Minor cleanup in Restart logic.",
-            "Version 2.0 [01.12.2024] - Implement task creation, display, and removal."
+            "Version 2.0 [01.12.2024] - Implement task creation, display, and removal.",
+            "Version 2.1 [01.12.2024] - Remove commented-out code."
         };
 
         Console.Clear();
@@ -230,8 +231,6 @@ internal class Program
         for (var index = 0; index < taskList.Count; index++) sb.AppendLine($"[{index}] - {taskList[index]}");
 
         sb.AppendLine().AppendLine("Please enter task id:");
-
-        // Console.WriteLine(sb.ToString());
 
         taskList.RemoveAt(TaskIdInputAndValidate(taskList.Count, sb.ToString()));
     }
