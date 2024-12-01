@@ -105,7 +105,7 @@ internal class Program
     private static void HandleInvalidRestartInput()
     {
         Console.Clear();
-        ErrorMessage("Invalid input. Please press 'y' for yes or 'n' for no.");
+        ShowAsErrorMessage("Invalid input. Please press 'y' for yes or 'n' for no.");
     }
 
     private static void AvailableOptions(string? user)
@@ -145,7 +145,7 @@ internal class Program
 
     private static void BotInfo()
     {
-        var version = "2.1";
+        var version = "2.2";
         var releaseDate = "16.11.2024";
         var patchNotes = new List<string>
         {
@@ -153,7 +153,8 @@ internal class Program
             "Version 1.1 [01.12.2024] - Refactoring and code cleanup.",
             "Version 1.2 [01.12.2024] - Minor cleanup in Restart logic.",
             "Version 2.0 [01.12.2024] - Implement task creation, display, and removal.",
-            "Version 2.1 [01.12.2024] - Remove commented-out code."
+            "Version 2.1 [01.12.2024] - Remove commented-out code.",
+            "Version 2.2 [01.12.2024] - Add human-readable task indices and cancellation option."
         };
 
         Console.Clear();
@@ -173,7 +174,7 @@ internal class Program
     private static void DefaultAction()
     {
         Console.Clear();
-        ErrorMessage("Not a valid command. Type /help for a list of options.");
+        ShowAsErrorMessage("Not a valid command. Type /help for a list of options.");
         Console.WriteLine();
     }
 
@@ -199,7 +200,7 @@ internal class Program
 
         if (taskList.Count == 0)
         {
-            ErrorMessage("No tasks have been added.");
+            ShowAsErrorMessage("No tasks have been added.");
             Console.WriteLine();
             return;
         }
@@ -207,7 +208,10 @@ internal class Program
         var sb = new StringBuilder();
 
         sb.AppendLine("Current tasks:").AppendLine();
-        foreach (var task in taskList) sb.AppendLine($"- {task}");
+        for (var index = 0; index < taskList.Count; index++)
+        {
+            sb.AppendLine($"{index + 1} - {taskList[index]}");
+        }
 
         Console.WriteLine(sb.ToString());
     }
@@ -220,7 +224,7 @@ internal class Program
 
         if (taskList.Count == 0)
         {
-            ErrorMessage("No tasks have been added.");
+            ShowAsErrorMessage("No tasks have been added.");
             Console.WriteLine();
             return;
         }
@@ -228,11 +232,26 @@ internal class Program
         var sb = new StringBuilder();
 
         sb.AppendLine("Current tasks:").AppendLine();
-        for (var index = 0; index < taskList.Count; index++) sb.AppendLine($"[{index}] - {taskList[index]}");
+        for (var index = 0; index < taskList.Count; index++)
+        {
+            sb.AppendLine($"[{index + 1}] - {taskList[index]}");
+        }
 
-        sb.AppendLine().AppendLine("Please enter task id:");
+        sb.AppendLine().AppendLine("Enter task ID to remove or 0 to cancel:");
 
-        taskList.RemoveAt(TaskIdInputAndValidate(taskList.Count, sb.ToString()));
+        var taskId = TaskIdInputAndValidate(taskList.Count, sb.ToString());
+
+        if (taskId == 0)
+        {
+            Console.WriteLine("Action cancelled.");
+            Console.WriteLine();
+            return;
+        }
+
+        taskList.RemoveAt(taskId - 1);
+
+        Console.WriteLine($"Task [{taskId}] has been removed.");
+        Console.WriteLine();
     }
 
     private static int TaskIdInputAndValidate(int taskCount, string message)
@@ -242,10 +261,11 @@ internal class Program
             var input = InputAndValidate(message, "Id value");
 
             if (int.TryParse(input, out var result))
-                if (result >= 0 && result < taskCount && input.Length == result.ToString().Length)
-                    return result;
+            {
+                if (result >= 0 && result <= taskCount && input.Length == result.ToString().Length) return result;
+            }
 
-            ErrorMessage("Invalid task ID. Please enter a valid number within the range. Press any key to retry.");
+            ShowAsErrorMessage("Invalid task ID. Please enter a valid number within the range. Press any key to retry.");
             Console.ReadKey();
         }
     }
@@ -262,7 +282,7 @@ internal class Program
 
             if (!string.IsNullOrEmpty(input)) continue;
 
-            ErrorMessage($"{entity} cannot be empty. Press any key to retry.");
+            ShowAsErrorMessage($"{entity} cannot be empty. Press any key to retry.");
             Console.ReadKey();
         } while (string.IsNullOrEmpty(input));
 
@@ -275,12 +295,12 @@ internal class Program
     {
         if (!string.IsNullOrEmpty(user)) return true;
 
-        ErrorMessage("Please introduce yourself first. Execute /start command.");
+        ShowAsErrorMessage("Please introduce yourself first. Execute /start command.");
         Console.WriteLine();
         return false;
     }
 
-    private static void ErrorMessage(string text)
+    private static void ShowAsErrorMessage(string text)
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(text);
